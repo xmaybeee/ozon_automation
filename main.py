@@ -1,12 +1,9 @@
 import json
 import requests
-import urllib3
 import re
-import telegram
-bot = telegram.Bot(token='6950779818:AAE-UmwNrtavlXls5_KEGejORsl7Sp9FIH0')
 
 
-# # Информация о заказах с Озона
+# Информация о заказах с Озона
 class OzonOrder:
     def __init__(self, api_key, client_id):
         self.api_key = api_key
@@ -19,7 +16,7 @@ class OzonOrder:
             "Client-Id": self.client_id,
             "Content-Type": "application/json",
             "Accept-Language": "ru-RU"
-            }
+        }
 
         body = {
             "dir": "ASC",
@@ -44,12 +41,9 @@ class OzonOrder:
         ozon_response = json.loads((requests.post(self.url_ozon, headers=header_ozon, data=json.dumps(body))).text)
         return ozon_response
 
-#
-ozon_order = OzonOrder("", "") # api и client id Озона
+
+ozon_order = OzonOrder("", "")  # api и client id Озона
 orders = ozon_order.get_orders()
-
-print(orders)
-
 
 postings = orders['result']['postings']
 russian_post_data = {
@@ -59,11 +53,11 @@ russian_post_data = {
     "mail-direct": 643,
     "mass": 1000,
     "index-to": 108832,
-    "region-to": "Кленовское пос", # область
-    "place-to": "Лукошкино", # город
+    "region-to": "Кленовское пос",  # область
+    "place-to": "Лукошкино",  # город
     "street-to": "Невская ул.",
     "house-to": "28",
-    "recipient-name": "", # имя
+    "recipient-name": "",  # имя
     "postoffice-code": "400066",  # Всегда!
     "tel-address": "79676920725",
     "order-num": "73169698-0116-3"
@@ -71,8 +65,8 @@ russian_post_data = {
 
 # Информация о запросе в Почту России
 url_pochta = "https://otpravka-api.pochta.ru/1.0/user/backlog"
-authorization = "" # Ваш токен в Почте России
-user_authorization = "" # Ваш ключ в Почте России
+authorization = ""  # Ваш токен в Почте России
+user_authorization = ""  # Ваш ключ в Почте России
 
 # Заголовки запроса с API key и Client ID
 header_pochta = {
@@ -85,7 +79,6 @@ for posting in postings:
 
     index_to = int(posting['customer']['address']['zip_code'])
     russian_post_data['index-to'] = index_to
-
 
     region_to = posting['analytics_data']['region']
     russian_post_data['region-to'] = region_to
@@ -106,7 +99,5 @@ for posting in postings:
     russian_post_data['order-num'] = order_num
 
     tracking_num = posting['tracking_number']
-        
+
     print(russian_post_data)
-
-
